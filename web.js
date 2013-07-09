@@ -13,7 +13,7 @@ app.get('/', function(request, response) {
 	  }
 	  response.write(data);
 	});
-  response.write('Debug: reached 2');
+  response.send('Debug: reached 2');
 });
 
 var port = process.env.PORT || 5000;
