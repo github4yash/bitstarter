@@ -5,17 +5,14 @@ var app = express.createServer(express.logger());
 
 app.get('/', function(request, response) {
 
-  response.write('Debug: reached 0');
 	fs.readFile('./index.html', 'utf8', function (err,data) {
-  response.write('Debug: reached 1');
 	  if (err) {
-            response.write("Error occured...");
+            response.send("Error occured...");
 	    return console.log(err);
 	  }
-	  response.write(data);
+	  response.send(data);
 	});
 
-  response.send('Debug: reached 2');
 });
 
 var port = process.env.PORT || 5000;
