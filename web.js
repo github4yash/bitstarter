@@ -4,6 +4,7 @@ var express = require('express');
 var app = express.createServer(express.logger());
 
 app.get('/', function(request, response) {
+  response.send('Debug: reached 0');
 	fs.readFile('./index.html', 'utf8', function (err,data) {
   response.send('Debug: reached 1');
 	  if (err) {
