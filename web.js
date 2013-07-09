@@ -14,7 +14,6 @@ app.get('/', function(request, response) {
 	  response.write(data);
 	});
   response.write('Debug: reached 2');
-response.close();
 });
 
 var port = process.env.PORT || 5000;
