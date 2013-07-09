@@ -6,10 +6,10 @@ var app = express.createServer(express.logger());
 app.get('/', function(request, response) {
 	fs.readFile('index.html', 'utf8', function (err,data) {
 	  if (err) {
-            response.send("Error occured...");
+            response.write("Error occured...");
 	    return console.log(err);
 	  }
-	  response.send(data);
+	  response.write(data);
 	});
   response.send('Hello World 2!');
 });
