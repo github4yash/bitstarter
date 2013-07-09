@@ -6,11 +6,9 @@ var app = express.createServer(express.logger());
 app.get('/', function(request, response) {
 	fs.readFile('./indexe.html', 'utf8', function (err,data) {
 	  if (err) {
-            response.send(err);
-/*
+            //response.send(err);
             response.send("Error occured...");
 	    return console.log(err);
-*/
 	  } else {
 	    response.send(data);
           }
