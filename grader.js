@@ -25,7 +25,9 @@ var fs = require('fs');
 var program = require('commander');
 var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
+var DOWNLOAD_TO_FILE = "tmp.html";
 var CHECKSFILE_DEFAULT = "checks.json";
+var restler = require('restler');
 
 var assertFileExists = function(infile) {
     var instr = infile.toString();
@@ -35,6 +37,35 @@ var assertFileExists = function(infile) {
     }
     return instr;
 };
+
+var downloadHtmlAndCheck = function(url) {
+//console.log('checkHtmlURL->url: %s', url);
+    if(fs.existsSync(DOWNLOAD_TO_FILE)) {
+      // truncate it if it exists
+      fs.unlinkSync(DOWNLOAD_TO_FILE);
+//console.log("Removed %s",DOWNLOAD_TO_FILE);
+    }
+    if(!fs.existsSync(DOWNLOAD_TO_FILE)) {
+      // create it if it does not exist
+      fs.createWriteStream(DOWNLOAD_TO_FILE);
+//console.log("Created %s",DOWNLOAD_TO_FILE);
+
+    } 
+
+    restler.get(url).on('complete', function(body) {
+//console.log(body);
+      fs.writeFile(DOWNLOAD_TO_FILE, body, 'utf-8', function (err) {
+        if (err) {
+          console.error("failed to save");
+	  process.exit(-2);
+        } else {
+//console.log("successfuly saved");
+          myCheckHtmlFile(DOWNLOAD_TO_FILE);
+          return;
+        }
+      });
+    });
+}
 
 var cheerioHtmlFile = function(htmlfile) {
     return cheerio.load(fs.readFileSync(htmlfile));
@@ -64,11 +95,32 @@ var clone = function(fn) {
 if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+        .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists))
+        .option('-u, --url <url>', 'URL to index.html')
         .parse(process.argv);
-    var checkJson = checkHtmlFile(program.file, program.checks);
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+
+   if (process.argv.length > 6) { // we dont want to get both -f and -u
+	console.log("\n\terror: invalid invocation");
+	process.exit(-1);
+   }
+
+var myCheckHtmlFile = function(name) {
+    checkJson = checkHtmlFile(name, program.checks);
+    outJson = JSON.stringify(checkJson, null, 4);
+    console.log( outJson);
+    return;
+};
+    var checkJson, outJson ;
+
+   if (program.file) {
+//console.log('file: %s', program.file);
+    myCheckHtmlFile(program.file);
+   } 
+   if (program.url) {
+//console.log('url: %s', program.url);
+    downloadHtmlAndCheck(program.url);
+   }
 } else {
     exports.checkHtmlFile = checkHtmlFile;
+    exports.checkHtmlURL = checkHtmlURL;
 }
