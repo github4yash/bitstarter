@@ -1,3 +1,10 @@
+# Preamble
+This codebase here has been forked and modified using the instructions below. 
+So this code is ready to be used whereas the instructions below walk you through the 
+steps you need to do to get to this state.
+
+I have deployed this code at [Heroku] (http://github4yash-bitstarter-mooc.herokuapp.com) check it out.
+
 # Overview
 
 This is a simple template app for a Bitcoin-based crowdfunding site that
